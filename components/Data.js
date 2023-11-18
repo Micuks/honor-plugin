@@ -6,6 +6,10 @@ const getRoot = (root = "") => {
     root = `${_path}/`;
   } else if (root === "honor") {
     root = `${_path}/plugins/honor-plugin/`;
+  } else if (root === "root") {
+    root = `${_path}/`;
+  } else {
+    root = `${_path}/plugins/${root}/`;
   }
   return root;
 };
@@ -33,6 +37,21 @@ let Data = {
    */
   async setCacheJSON(key, data, EX = 3600 * 24 * 365) {
     await readdirSync.set(key, JSON.stringify(data), { EX });
+  },
+
+  async importModule(file, root = "") {
+    root = getRoot(root);
+    if (!/\.js$/.test(file)) {
+      file = file + ".js";
+    }
+    if (fs.existsSync(`${root}/${file}`)) {
+      try {
+        let data = await import(`file://${root}/${file}?t=${new Date() * 1}`);
+        return data || {};
+      } catch (e) {
+        console.log(e);
+      }
+    }
   },
 };
 
