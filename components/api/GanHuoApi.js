@@ -15,7 +15,7 @@ function getApi(api) {
 let GanHuoApi = {
   async req(url, param = {}, EX = 3600) {
     let cacheData = await Data.getCacheJSON(`honor:ganhuo:${url}`);
-    if (cacheData && cacheData.data && cacheData.data.name !== "undefined") {
+    if (cacheData && cacheData.data && cacheData.data.name !== undefined) {
       return cacheData;
     }
 
