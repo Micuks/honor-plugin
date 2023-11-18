@@ -11,11 +11,11 @@ const ProficiencyQuery = {
 
     console.log(ret);
     // TODO: Platform regularize to android and ios
-    if (length(ret) === 4) {
+    if (ret.length === 4) {
       e.hero_name = ret[1];
       e.os = ret[2] || "android";
       e.platform = ret[3] || "qq";
-    } else if (length(ret) === 2) {
+    } else if (ret.length === 2) {
       e.hero_name = ret[1];
       e.os = ret[2] || "android";
       e.platform = "qq";
