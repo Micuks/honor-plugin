@@ -4,8 +4,10 @@ import { Common } from "#honor";
 
 const ProficiencyQuery = {
   async query(e) {
+    console.log(e.matches);
     let hero_name = e.matches[1];
     let platform = e.matches[4] || "安卓";
+    console.log(hero_name, platform);
     let proficiency = await ProficiencyData.getProficiency(hero_name, platform);
     if (lodash.isEmpty(proficiency)) {
       e.reply("没有找到该英雄的战力信息");
