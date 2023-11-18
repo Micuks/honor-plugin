@@ -35,7 +35,7 @@ const ProficiencyQuery = {
       e.platform = "wx";
     }
 
-    e.platform = `${e.os}${e.platform}}`;
+    e.platform = `${e.os}${e.platform}`;
 
     console.log(e.hero_name, e.platform);
 
