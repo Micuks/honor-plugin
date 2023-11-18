@@ -43,7 +43,7 @@ let GanHuoApi = {
   async getHeroProficiency(hero_name = "露娜", platform = "aqq") {
     // Form query url
     const queryParams = { hero: hero_name, type: platform };
-    const query = new URLSearchParams(queryParams).toString;
+    const query = new URLSearchParams(queryParams).toString();
     const url = `/hero/select.php?${query}`;
 
     return await GanHuoApi.req(url);
