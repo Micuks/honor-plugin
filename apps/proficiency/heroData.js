@@ -31,3 +31,5 @@ class HeroProficiency {
     this.updatetime = updatetime;
   }
 }
+
+export default HeroProficiency;
