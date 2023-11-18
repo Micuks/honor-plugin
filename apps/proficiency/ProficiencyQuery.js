@@ -22,14 +22,14 @@ const ProficiencyQuery = {
     }
 
     // regularize os
-    if (e.os in ["安卓", "安", "android", "Android"]) {
+    if (["安卓", "安", "android", "Android"].includes(e.os)) {
       e.os = "a";
     } else {
       e.os = "i";
     }
 
     // regularize platform
-    if (e.platform in ["QQ", "qq", "q"]) {
+    if (["QQ", "qq", "q"].includes(e.platform)) {
       e.platform = "qq";
     } else {
       e.platform = "wx";
