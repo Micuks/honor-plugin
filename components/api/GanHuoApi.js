@@ -35,6 +35,7 @@ let GanHuoApi = {
         .slice(0, 5)}`;
       await Data.setCacheJSON(`honor:ganhuo:${url}`, retData, EX);
     }
+    return retData;
   },
 
   async getHeroProficiency(hero_name = "露娜", platform = "aqq") {
@@ -45,3 +46,5 @@ let GanHuoApi = {
     return await GanHuoApi.req(`/hero/select.php?${query}`);
   },
 };
+
+export default GanHuoApi;
