@@ -7,7 +7,7 @@ const proficiencyReg =
 
 const ProficiencyQuery = {
   async query(e) {
-    let ret = proficiencyReg.exec(msg);
+    let ret = proficiencyReg.exec(e.msg);
 
     console.log(ret);
     // TODO: Platform regularize to android and ios
