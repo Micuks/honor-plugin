@@ -42,8 +42,9 @@ let GanHuoApi = {
     // Form query url
     const queryParams = { hero: hero_name, type: platform };
     const query = new URLSearchParams(queryParams).toString;
+    const url = `/hero/select.php?${query}`;
 
-    return await GanHuoApi.req(`/hero/select.php?${query}`);
+    return await GanHuoApi.req(url);
   },
 };
 
