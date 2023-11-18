@@ -3,12 +3,25 @@ import Plugin from "./common/Plugin.js";
 import { Version } from "#honor";
 
 class App {
+  /**
+   * Represents the constructor of the App class.
+   * @constructor
+   * @param {Object} cfg - The configuration object for the App.
+   * @param {string} cfg.id - The ID of the App.
+   */
   constructor(cfg) {
     this.id = cfg.id;
     this.cfg = cfg;
     this.apps = {};
   }
 
+  /**
+   * Registers a key with a function and optional configuration.
+   * If the key is an object, each key-value pair will be registered recursively.
+   * @param {string|Object} key - The key or object containing key-value pairs to register.
+   * @param {Function} fn - The function to be registered.
+   * @param {Object} [cfg={}] - Optional configuration for the registered key.
+   */
   reg(key, fn, cfg = {}) {
     if (lodash.isPlainObject(key)) {
       lodash.forEach(key, (cfg, k) => {
@@ -23,6 +36,10 @@ class App {
   }
 
   // Get V3 Execution method
+  /**
+   * Creates a v3App class for the Honor plugin.
+   * @returns {Class} The v3App class.
+   */
   v3App() {
     let cfg = this.cfg || {};
     let rules = [];
