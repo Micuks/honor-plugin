@@ -48,17 +48,13 @@ const ProficiencyQuery = {
       return;
     }
     // TODO: Render.render message
-    let msg = format(
-      "{0}({1})\n战力: {2}\n区服: {3}\n城市: {4}\n省份: {5}\n国标: {6}\n更新时间: {7}",
-      proficiency.name,
-      proficiency.alias,
-      proficiency.power,
-      proficiency.area,
-      proficiency.city,
-      proficiency.province,
-      proficiency.guobiao,
-      proficiency.updatetime
-    );
+    let msg = `${proficiency.name}(${proficiency.alias})
+战力: ${proficiency.power}
+区服: ${proficiency.area}
+城市: ${proficiency.city}
+省份: ${proficiency.province}
+国标: ${proficiency.guobiao}
+更新时间: ${proficiency.updatetime}`;
     e.reply(msg);
     return true;
   },
