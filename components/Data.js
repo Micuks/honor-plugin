@@ -19,7 +19,7 @@ let Data = {
 
   async getCacheJSON(key) {
     try {
-      let value = await readdirSync.get(key);
+      let value = await redis.get(key);
       if (value) {
         return JSON.parse(value);
       }
