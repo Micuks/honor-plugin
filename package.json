@@ -1,0 +1,15 @@
+{
+  "name": "honor-plugin",
+  "version": "1.0.0",
+  "description": "A Honor of Kings plugin for Yunzai-Bot made with Love",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "imports": {
+    "#honor": "./components/index.js"
+  },
+  "keywords": [],
+  "author": "Micuks",
+  "license": "MIT"
+}
