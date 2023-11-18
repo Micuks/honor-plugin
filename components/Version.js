@@ -2,9 +2,7 @@ import fs from "node:fs";
 import lodash from "lodash";
 import { Data } from "#honor";
 
-let packageJson = JSON.parse(
-  fs.readFileSync(fs.readFileSync("package.json", "utf8"))
-);
+let packageJson = JSON.parse(fs.readFileSync("package.json", "utf8"));
 
 const getLine = function (line) {
   // Remove leading * and spaces
