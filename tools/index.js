@@ -14,7 +14,7 @@ const Index = {
   },
 
   async startMsg() {
-    let mstStr = await redis.get("honor:restart-msg");
+    let msgStr = await redis.get("honor:restart-msg");
     if (msgStr) {
       let msg = JSON.parse(msgStr);
       await replyPrivate(msg.qq, msg.msg);
