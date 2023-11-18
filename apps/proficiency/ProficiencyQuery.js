@@ -1,5 +1,5 @@
 import lodash from "lodash";
-import ProficiencyData from "./ProficiencyData";
+import ProficiencyData from "./ProficiencyData.js";
 import { Common } from "#honor";
 
 const ProficiencyQuery = {
