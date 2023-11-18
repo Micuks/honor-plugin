@@ -10,6 +10,14 @@
 
 ### #露娜查战力安卓 QQ
 
+以下均是正确的查询语句:
+
+- #露娜查战力安卓 qq
+- 镜查战力 iosvx
+- 镜查战力 iOS 微信
+- 妲己查战力苹果 v
+- #孙悟空战力 androidq
+
 ![](./resources/readme/proficiency-query-sample.png)
 
 ## 致谢
