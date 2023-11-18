@@ -9,7 +9,6 @@ const ProficiencyQuery = {
   async query(e) {
     let ret = proficiencyReg.exec(e.msg);
 
-    console.log(ret);
     // TODO: Platform regularize to android and ios
     if (ret.length === 4) {
       e.hero_name = ret[1];
@@ -36,8 +35,6 @@ const ProficiencyQuery = {
     }
 
     e.platform = `${e.os}${e.platform}`;
-
-    console.log(e.hero_name, e.platform);
 
     let proficiency = await ProficiencyData.getProficiency(
       e.hero_name,
