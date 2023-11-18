@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A Honor of Kings plugin for Yunzai-Bot made with Love",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

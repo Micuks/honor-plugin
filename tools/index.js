@@ -1,5 +1,4 @@
 import { Data, Version } from "#honor";
-import fs, { readdirSync } from "node:fs";
 import fs from "node:fs";
 
 let replyPrivate = async function () {};
