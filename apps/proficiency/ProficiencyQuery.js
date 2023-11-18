@@ -40,7 +40,7 @@ const ProficiencyQuery = {
       e.hero_name,
       e.platform
     );
-    if (lodash.isEmpty(proficiency)) {
+    if (lodash.isEmpty(proficiency) || proficiency.name === undefined) {
       e.reply("没有找到该英雄的战力信息");
       return;
     }

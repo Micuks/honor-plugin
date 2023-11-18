@@ -8,4 +8,5 @@
 
 ## 致谢
 
-仔细参考了 [Miao-plugin](https://github.com/yoimiya-kokomi/miao-plugin)
+- 仔细参考了 [Miao-plugin](https://github.com/yoimiya-kokomi/miao-plugin)
+- [干货助手](使用了干货助手): 感谢干货助手提供的 API 服务
