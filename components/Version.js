@@ -23,6 +23,9 @@ const readLogFile = function (root, versionCount = 4) {
   root = Data.getRoot();
   let logPath = `${root}/CHANGELOG.md`;
   let logs = {};
+  let changelogs = [];
+  let currentVersion;
+
   try {
     if (fs.existsSync(logPath)) {
       logs = fs.readFileSync(logPath, "utf8") || "";
