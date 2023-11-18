@@ -2,7 +2,7 @@
  * 干货助手API
  */
 
-import { ProficiencyQuery } from "./proficiency/ProficiencyQuery.js";
+import ProficiencyQuery from "./proficiency/ProficiencyQuery.js";
 import { App } from "#honor";
 
 let app = App.init({
