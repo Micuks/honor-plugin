@@ -48,13 +48,14 @@ const ProficiencyQuery = {
       return;
     }
     // TODO: Render.render message
-    let msg = `${proficiency.name}(${proficiency.alias})
-战力: ${proficiency.power}
-区服: ${proficiency.area}
-城市: ${proficiency.city}
-省份: ${proficiency.province}
-国标: ${proficiency.guobiao}
-更新时间: ${proficiency.updatetime}`;
+    // 头像: ${data.photo}
+    let msg = `${data.name}(${data.alias})
+    区服: ${data.platform}
+    地区: ${data.area} (战力: ${data.areaPower})
+    城市: ${data.city} (战力: ${data.cityPower})
+    省份: ${data.province} (战力: ${data.provincePower})
+    国标: ${data.guobiao}
+    更新时间: ${data.updatetime}`;
     e.reply(msg);
     return true;
   },
