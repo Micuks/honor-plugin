@@ -36,7 +36,7 @@ let Data = {
    * @param {number} EX Expiration time in seconds
    */
   async setCacheJSON(key, data, EX = 3600 * 24 * 365) {
-    await readdirSync.set(key, JSON.stringify(data), { EX });
+    await redis.set(key, JSON.stringify(data), { EX });
   },
 
   async importModule(file, root = "") {
