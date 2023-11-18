@@ -27,6 +27,8 @@ let GanHuoApi = {
       },
     });
 
+    console.log(response);
+
     let retData = await response.json();
     if (retData && retData.data) {
       let d = new Date();
