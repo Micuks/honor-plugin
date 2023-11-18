@@ -28,11 +28,13 @@ pnpm install -P
 
 以下均是正确的查询语句:
 
-- #露娜查战力安卓 qq
-- 镜查战力 iosvx
-- 镜查战力 iOS 微信
-- 妲己查战力苹果 v
-- #孙悟空战力 androidq
+```
+#露娜查战力安卓qq
+镜查战力iosvx
+镜查战力iOS微信
+妲己查战力苹果v
+#孙悟空战力androidq
+```
 
 ![](./resources/readme/proficiency-query-sample.png)
 
