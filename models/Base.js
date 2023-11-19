@@ -38,6 +38,11 @@ export default class Base {
     return proxy;
   }
 
+  getData(arrList = "", cfg = {}) {
+    arrList = arrList || this._dataKey || this.constructor._dataKey || "";
+    return Data.getData(this, arrList, cfg);
+  }
+
   // Set cache
   _cache(time = 3600) {
     let id = this._uuid;
