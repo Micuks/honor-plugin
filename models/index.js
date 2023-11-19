@@ -1,4 +1,6 @@
 import fs from "node:fs";
+import Base from "./Base.js";
+import Hero from "./Hero.js";
 
 for (let type of ["hero"]) {
   let file = `./plugins/honor-plugin/resources/meta/${type}/index.js`;
