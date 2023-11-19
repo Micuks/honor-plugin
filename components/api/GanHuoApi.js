@@ -35,6 +35,7 @@ let GanHuoApi = {
         .slice(0, 5)}`;
       await Data.setCacheJSON(`honor:ganhuo:${url}`, retData, EX);
     }
+
     return retData;
   },
 
