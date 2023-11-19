@@ -53,6 +53,11 @@ let Data = {
       }
     }
   },
+
+  // TODO: Implement
+  async importCfg(field = "") {
+    return {};
+  },
 };
 
 export default Data;
