@@ -8,7 +8,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "imports": {
-    "#honor": "./components/index.js"
+    "#honor": "./components/index.js",
+    "#honor.models": "./models/index.js"
   },
   "keywords": [],
   "author": "Micuks",
