@@ -3,7 +3,7 @@ import ProficiencyData from "./ProficiencyData.js";
 import { Common } from "#honor";
 
 const proficiencyReg =
-  /^#*([^#]+?)\s*(?:honor)?(?:查战力|战力|查询|战斗力|战力查询|战斗力查询|战斗力查询)(安卓|安|果|苹果|ios|android|iOS|Android|华为|huawei|Huawei|HUAWEI)?(QQ|q|qq|微信|w|wx|WX|微|v|vx|VX)?$/;
+  /^#*([^#]+?)\s*(?:honor)?(?:查战力|战力|查询|战斗力|战力查询|战斗力查询|战斗力查询)(安卓|安|果|苹果|ios|android|iOS|Android|华为|huawei|Huawei|HUAWEI)(QQ|q|qq|微信|w|wx|WX|微|v|vx|VX)?$/;
 
 const ProficiencyQuery = {
   async query(e) {
