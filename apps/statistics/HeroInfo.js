@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { getHeroInfoRefresh } from "./HeroCommon";
+import { getHeroInfoRefresh } from "./HeroCommon.js";
 import { Common, Data, Format } from "#honor";
 import { Hero } from "#honor.models";
 

@@ -1,6 +1,7 @@
 import proficiency from "./proficiency.js";
+import heroinfo from "./heroinfo.js";
 
-let apps = { proficiency };
+let apps = { proficiency, heroinfo };
 let rules = {}; // V3
 
 for (let key in apps) {

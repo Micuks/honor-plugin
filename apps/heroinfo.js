@@ -1,9 +1,12 @@
+/**
+ * 英雄信息查询
+ */
 import HeroInfo from "./statistics/HeroInfo.js";
 
 import { App } from "#honor";
 
 let app = App.init({
-  id: "statistics",
+  id: "heroinfo",
   name: "英雄信息统计",
 });
 
