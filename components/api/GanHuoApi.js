@@ -3,12 +3,11 @@
  * https://www.sapi.run/wangzhe/
  */
 
-import fetch from "node-fetch";
 import { Data } from "#honor";
 import FetchToolkit from "../../tools/fetch.js";
 
 const host = "https://www.sapi.run";
-const fetchAgent = FetchToolkit.agentSelector;
+const fetch = FetchToolkit.fetch;
 
 function getApi(api) {
   return `${host}${api}`;
@@ -27,17 +26,15 @@ let GanHuoApi = {
       headers: param.headers || {
         "User-Agent": "Yunzai-Bot/Honor-Plugin",
       },
-      agent: fetchAgent,
     });
 
-    let retData = await response.json();
+    // JSON is automatically parsed
+    let retData = await response;
     if (retData && retData.data) {
       let d = new Date();
-      retData.lastUpdate = `${d.toLocaleDateString()} ${
-        d
-          .toTimeString()
-          .slice(0, 5)
-      }`;
+      retData.lastUpdate = `${d.toLocaleDateString()} ${d
+        .toTimeString()
+        .slice(0, 5)}`;
       await Data.setCacheJSON(`honor:ganhuo:${url}`, retData, EX);
     }
   },
