@@ -5,8 +5,10 @@
 
 import fetch from "node-fetch";
 import { Data } from "#honor";
+import FetchToolkit from "../../tools/fetch.js";
 
 const host = "https://www.sapi.run";
+const fetchAgent = FetchToolkit.agentSelector;
 
 function getApi(api) {
   return `${host}${api}`;
@@ -24,6 +26,7 @@ let GanHuoApi = {
       method: param.method || "GET",
       headers: param.headers || {
         "User-Agent": "Yunzai-Bot/Honor-Plugin",
+        agent: fetchAgent,
       },
     });
 
