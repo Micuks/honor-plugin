@@ -20,21 +20,47 @@ let GanHuoApi = {
       return cacheData;
     }
 
-    let response = await fetch(getApi(`${url}`), {
+    const response = await fetch(getApi(`${url}`), {
       ...param,
       method: param.method || "GET",
       headers: param.headers || {
-        "User-Agent": "Yunzai-Bot/Honor-Plugin",
+        "Accept":
+          "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+
+        "Accept-Encoding": "gzip, deflate, br",
+
+        "Accept-Language": "en-US,en;q=0.5",
+
+        "Connection": "keep-alive",
+
+        "Cookie": "X_CACHE_KEY=f07ef42a5c50d2310a8fbb10490fea15",
+
+        "Host": "www.sapi.run",
+
+        "Sec-Fetch-Dest": "document",
+
+        "Sec-Fetch-Mode": "navigate",
+
+        "Sec-Fetch-Site": "none",
+
+        "Sec-Fetch-User": "?1",
+
+        "Upgrade-Insecure-Requests": "1",
+
+        "User-Agent":
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/119.0",
       },
     });
 
     // JSON is automatically parsed
-    let retData = await response;
+    const retData = response;
     if (retData && retData.data) {
-      let d = new Date();
-      retData.lastUpdate = `${d.toLocaleDateString()} ${d
-        .toTimeString()
-        .slice(0, 5)}`;
+      const d = new Date();
+      retData.lastUpdate = `${d.toLocaleDateString()} ${
+        d
+          .toTimeString()
+          .slice(0, 5)
+      }`;
       await Data.setCacheJSON(`honor:ganhuo:${url}`, retData, EX);
     }
   },
