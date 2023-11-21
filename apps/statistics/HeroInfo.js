@@ -24,12 +24,15 @@ let HeroInfo = {
   },
 
   async render({ e, hero }) {
+    // heroInfo is just an timestamp of the last update of heroInfo
     let heroInfo = e._heroInfo || (await getHeroInfoRefresh(e, hero.id));
     if (!heroInfo) {
       return true;
     }
 
-    // TODO: Implement
+    _.forEach("banRate,pickRate,bpRate,winRate,score".split(","), (key) => {
+      let fn = (n) => Format.pct(n);
+    });
 
     return await Common.render(
       "hero-info/hero-info",

@@ -3,6 +3,11 @@ import HeroId from "./hero/HeroId.js";
 import { Data, Format, Cfg, Meta } from "#honor";
 import Serv from "./serv/Serv.js";
 
+/**
+ * Represents a Hero.
+ * @class
+ * @extends Base
+ */
 class Hero extends Base {
   constructor({ id, name = "" }) {
     super();
@@ -66,6 +71,12 @@ class Hero extends Base {
     return heroInfo;
   }
 
+  getAttrList() {}
+
+  /**
+   * Sets the basic data for a Hero.
+   * @param {Object} dataSource - The data source containing the properties for the Hero.
+   */
   setBasicData(dataSource) {
     this._id = dataSource.id || this._id || -1;
     this.name = dataSource.name || this.name || "";
@@ -88,7 +99,7 @@ class Hero extends Base {
     this.equipmentMoneyMin =
       dataSource.equipmentMoneyMin || this.equipmentMoneyMin || 0;
     this.img = dataSource.img || this.img || "";
-    this.likeStatus = dataSource.likeStatus || this.likeStatus || 0;
+    // this.likeStatus = dataSource.likeStatus || this.likeStatus || 0;
     this.change = dataSource.change || this.change || {};
     this.updateTime = dataSource.updateTime || this.updateTime || "";
     this.adjustmentTime =
@@ -119,6 +130,8 @@ class Hero extends Base {
     }
     let ret = await Serv.req(e, this);
     if (ret) {
+      // Hero._heroInfo marks the last time the hero was updated
+      // heroInfo data are stored in Hero.<fieldName> directly
       this._heroInfo = new Date() * 1;
       this.save();
       return this._update.length;
