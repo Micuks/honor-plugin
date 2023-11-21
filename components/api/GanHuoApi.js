@@ -5,8 +5,10 @@
 
 import fetch from "node-fetch";
 import { Data } from "#honor";
+import FetchToolkit from "../../tools/fetch.js";
 
 const host = "https://www.sapi.run";
+const fetchAgent = FetchToolkit.agentSelector;
 
 function getApi(api) {
   return `${host}${api}`;
@@ -19,29 +21,24 @@ let GanHuoApi = {
       return cacheData;
     }
 
-    try {
-      const response = await fetch(getApi(`${url}`), {
-        ...param,
-        method: param.method || "GET",
-        headers: param.headers || {
-          "User-Agent": "Yunzai-Bot/Honor-Plugin",
-        },
-        timeout: 5000, // Timeout after 5000ms
-      });
+    let response = await fetch(getApi(`${url}`), {
+      ...param,
+      method: param.method || "GET",
+      headers: param.headers || {
+        "User-Agent": "Yunzai-Bot/Honor-Plugin",
+      },
+      agent: fetchAgent,
+    });
 
-      const retData = await response.json();
-      if (retData && retData.data) {
-        let d = new Date();
-        retData.lastUpdate = `${d.toLocaleDateString()} ${d
+    let retData = await response.json();
+    if (retData && retData.data) {
+      let d = new Date();
+      retData.lastUpdate = `${d.toLocaleDateString()} ${
+        d
           .toTimeString()
-          .slice(0, 5)}`;
-        await Data.setCacheJSON(`honor:ganhuo:${url}`, retData, EX);
-      }
-
-      return retData;
-    } catch (err) {
-      console.log(`Error fetching data from ${url}: `, err);
-      return null;
+          .slice(0, 5)
+      }`;
+      await Data.setCacheJSON(`honor:ganhuo:${url}`, retData, EX);
     }
   },
 
