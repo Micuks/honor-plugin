@@ -19,24 +19,30 @@ let GanHuoApi = {
       return cacheData;
     }
 
-    let response = await fetch(getApi(`${url}`), {
-      ...param,
-      method: param.method || "GET",
-      headers: param.headers || {
-        "User-Agent": "Yunzai-Bot/Honor-Plugin",
-      },
-    });
+    try {
+      const response = await fetch(getApi(`${url}`), {
+        ...param,
+        method: param.method || "GET",
+        headers: param.headers || {
+          "User-Agent": "Yunzai-Bot/Honor-Plugin",
+        },
+        timeout: 5000, // Timeout after 5000ms
+      });
 
-    let retData = await response.json();
-    if (retData && retData.data) {
-      let d = new Date();
-      retData.lastUpdate = `${d.toLocaleDateString()} ${d
-        .toTimeString()
-        .slice(0, 5)}`;
-      await Data.setCacheJSON(`honor:ganhuo:${url}`, retData, EX);
+      const retData = await response.json();
+      if (retData && retData.data) {
+        let d = new Date();
+        retData.lastUpdate = `${d.toLocaleDateString()} ${d
+          .toTimeString()
+          .slice(0, 5)}`;
+        await Data.setCacheJSON(`honor:ganhuo:${url}`, retData, EX);
+      }
+
+      return retData;
+    } catch (err) {
+      console.log(`Error fetching data from ${url}: `, err);
+      return null;
     }
-
-    return retData;
   },
 
   async getHeroProficiency(hero_name = "露娜", platform = "aqq") {
