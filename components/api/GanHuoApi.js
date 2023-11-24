@@ -24,18 +24,18 @@ let GanHuoApi = {
       ...param,
       method: param.method || "GET",
       headers: param.headers || {
-        "Accept":
+        Accept:
           "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
 
         "Accept-Encoding": "gzip, deflate, br",
 
         "Accept-Language": "en-US,en;q=0.5",
 
-        "Connection": "keep-alive",
+        Connection: "keep-alive",
 
-        "Cookie": "X_CACHE_KEY=f07ef42a5c50d2310a8fbb10490fea15",
+        Cookie: "X_CACHE_KEY=f07ef42a5c50d2310a8fbb10490fea15",
 
-        "Host": "www.sapi.run",
+        Host: "www.sapi.run",
 
         "Sec-Fetch-Dest": "document",
 
@@ -56,13 +56,13 @@ let GanHuoApi = {
     const retData = response;
     if (retData && retData.data) {
       const d = new Date();
-      retData.lastUpdate = `${d.toLocaleDateString()} ${
-        d
-          .toTimeString()
-          .slice(0, 5)
-      }`;
+      retData.lastUpdate = `${d.toLocaleDateString()} ${d
+        .toTimeString()
+        .slice(0, 5)}`;
       await Data.setCacheJSON(`honor:ganhuo:${url}`, retData, EX);
     }
+
+    return retData;
   },
 
   async getHeroProficiency(hero_name = "露娜", platform = "aqq") {
