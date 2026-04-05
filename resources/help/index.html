@@ -1,0 +1,40 @@
+{{extend layout}}
+
+{{block 'css'}}
+<style>
+  @import url("{{_res_path}}help/index.css");
+</style>
+{{/block}}
+
+{{block 'main'}}
+<div class="page-header">
+  <div class="title">Honor Plugin</div>
+  <div class="subtitle">王者荣耀战力查询 & 营地数据助手</div>
+</div>
+
+{{each helpGroups group}}
+<div class="card">
+  <div class="card-header">{{group.name}}</div>
+  <div class="card-body help-list">
+    {{each group.items item}}
+    <div class="help-item">
+      <div class="help-cmd">{{item.cmd}}</div>
+      <div class="help-desc">{{item.desc}}</div>
+    </div>
+    {{/each}}
+  </div>
+</div>
+{{/each}}
+
+{{if tips}}
+<div class="card">
+  <div class="card-header">Tips</div>
+  <div class="card-body tips-box">
+    {{each tips tip}}
+    <div class="tip-item">{{tip}}</div>
+    {{/each}}
+  </div>
+</div>
+{{/if}}
+
+{{/block}}

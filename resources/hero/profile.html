@@ -1,0 +1,46 @@
+{{extend layout}}
+
+{{block 'css'}}
+<style>
+  @import url("{{_res_path}}hero/profile.css");
+</style>
+{{/block}}
+
+{{block 'main'}}
+<div class="page-header">
+  <div class="title">{{roleName || "营地信息"}}</div>
+  <div class="subtitle">营地ID: {{campId}}</div>
+</div>
+
+<div class="card">
+  <div class="card-header">个人信息</div>
+  <div class="card-body">
+    <div class="profile-stats">
+      {{each stats stat}}
+      <div class="stat-item">
+        <div class="stat-value">{{stat.value}}</div>
+        <div class="stat-label">{{stat.label}}</div>
+      </div>
+      {{/each}}
+    </div>
+  </div>
+</div>
+
+{{if roles && roles.length > 0}}
+<div class="card">
+  <div class="card-header">游戏角色</div>
+  <div class="card-body">
+    {{each roles role}}
+    <div class="role-item">
+      <div class="role-icon" style="background-image:url({{role.icon}})"></div>
+      <div class="role-info">
+        <div class="role-name">{{role.name}}</div>
+        <div class="role-desc">{{role.desc}}</div>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+</div>
+{{/if}}
+
+{{/block}}

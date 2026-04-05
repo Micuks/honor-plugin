@@ -3,5 +3,6 @@ import Version from "./Version.js";
 import App from "./App.js";
 import Format from "./Format.js";
 import Common from "./Common.js";
+import Render from "./Render.js";
 
-export { Common, Data, Version, App, Format };
+export { Common, Data, Version, App, Format, Render };

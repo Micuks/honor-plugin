@@ -1,0 +1,44 @@
+{{extend layout}}
+
+{{block 'css'}}
+<style>
+  @import url("{{_res_path}}hero/power.css");
+</style>
+{{/block}}
+
+{{block 'main'}}
+<div class="page-header">
+  <div class="title">{{roleName || "英雄战力"}}</div>
+  <div class="subtitle">营地ID: {{campId}}{{hasPower ? "" : " | 无Token，仅显示公开数据"}}</div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    英雄列表
+    {{if hasPower}}<span class="tag tag-gold">战力可见</span>{{else}}<span class="tag tag-blue">添加Token解锁战力</span>{{/if}}
+  </div>
+  <div class="card-body hero-grid">
+    {{each heroes hero idx}}
+    <div class="hero-row {{idx % 2 === 0 ? 'odd' : 'even'}}">
+      <div class="hero-rank">{{idx + 1}}</div>
+      <div class="hero-icon" style="background-image:url({{hero.icon}})"></div>
+      <div class="hero-info">
+        <div class="hero-name">{{hero.name}}{{if hero.honor}} <span class="tag tag-gold">{{hero.honor}}</span>{{/if}}</div>
+        <div class="hero-stats">
+          {{if hero.power > 0}}
+          <span class="stat-power">{{hero.power}}</span>
+          {{/if}}
+          <span class="stat-play">{{hero.playNum}}场</span>
+          <span class="stat-win">{{hero.winRate}}</span>
+        </div>
+      </div>
+      {{if hero.power > 0}}
+      <div class="hero-power-bar">
+        <div class="bar-fill" style="width:{{hero.powerPct}}%"></div>
+      </div>
+      {{/if}}
+    </div>
+    {{/each}}
+  </div>
+</div>
+{{/block}}

@@ -1,0 +1,44 @@
+.help-list {
+  padding: 6px 10px;
+}
+
+.help-item {
+  display: flex;
+  align-items: baseline;
+  padding: 7px 4px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.help-item:last-child {
+  border-bottom: none;
+}
+
+.help-cmd {
+  flex-shrink: 0;
+  width: 220px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #89c4ff;
+}
+
+.help-desc {
+  flex: 1;
+  font-size: 13px;
+  color: rgba(255,255,255,0.7);
+}
+
+.tips-box {
+  padding: 8px 14px;
+}
+
+.tip-item {
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+  padding: 3px 0;
+  line-height: 1.5;
+}
+
+.tip-item::before {
+  content: "- ";
+  color: #e6c87a;
+}

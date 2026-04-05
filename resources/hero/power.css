@@ -1,0 +1,80 @@
+.hero-grid {
+  padding: 4px 0;
+}
+
+.hero-row {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  gap: 10px;
+  position: relative;
+}
+
+.hero-row.odd { background: rgba(255,255,255,0.03); }
+.hero-row.even { background: rgba(255,255,255,0.07); }
+
+.hero-rank {
+  width: 22px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: bold;
+  color: rgba(255,255,255,0.4);
+}
+
+.hero-row:nth-child(1) .hero-rank { color: #ffd700; }
+.hero-row:nth-child(2) .hero-rank { color: #c0c0c0; }
+.hero-row:nth-child(3) .hero-rank { color: #cd7f32; }
+
+.hero-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+  border: 2px solid rgba(255,255,255,0.1);
+}
+
+.hero-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.hero-name {
+  font-size: 15px;
+  font-weight: bold;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hero-stats {
+  font-size: 12px;
+  color: rgba(255,255,255,0.6);
+  margin-top: 2px;
+  display: flex;
+  gap: 10px;
+}
+
+.stat-power {
+  color: #e6c87a;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.hero-power-bar {
+  width: 60px;
+  height: 6px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 3px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4fc3f7, #e6c87a);
+  border-radius: 3px;
+  min-width: 4px;
+}
