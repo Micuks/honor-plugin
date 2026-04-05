@@ -45,12 +45,16 @@ const tips = [
 
 const Help = {
   async render(e) {
-    const result = await Render.render("help/index", {
-      helpGroups,
-      tips,
-    }, { e, scale: 1.2 });
-
-    if (result) return result;
+    // 先尝试图片渲染
+    try {
+      const result = await Render.render("help/index", {
+        helpGroups,
+        tips,
+      }, { e, scale: 1.2 });
+      if (result) return result;
+    } catch (err) {
+      // 渲染失败，降级文本
+    }
 
     // 降级纯文本
     let msg = "=== Honor Plugin 帮助 ===\n";
@@ -60,6 +64,8 @@ const Help = {
         msg += `${item.cmd}\n  ${item.desc}\n`;
       }
     }
+    msg += "\n【Tips】\n";
+    for (const t of tips) msg += `- ${t}\n`;
     e.reply(msg.trim());
   },
 
