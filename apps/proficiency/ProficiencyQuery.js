@@ -1,6 +1,8 @@
 import lodash from "lodash";
 import ProficiencyData from "./ProficiencyData.js";
 import UserStore from "../../model/UserStore.js";
+import Render from "../../components/Render.js";
+import HeroAlias from "../../model/HeroAlias.js";
 
 // 平台别名映射
 const OS_MAP = {
@@ -129,23 +131,36 @@ const ProficiencyQuery = {
  * 执行查询
  */
 async function doQuery(e, heroName, platform) {
-  const proficiency = await ProficiencyData.getProficiency(heroName, platform);
+  // 别名/错别字 → 官方英雄名
+  const resolvedName = HeroAlias.resolve(heroName);
+
+  const proficiency = await ProficiencyData.getProficiency(resolvedName, platform);
   if (lodash.isEmpty(proficiency) || proficiency.name === undefined) {
-    e.reply(`没有找到「${heroName}」的战力信息`);
+    const hint = resolvedName !== heroName ? `（已尝试「${resolvedName}」）` : "";
+    e.reply(`没有找到「${heroName}」的战力信息${hint}`);
     return;
   }
 
   const names = { aqq: "安卓QQ", awx: "安卓微信", iqq: "苹果QQ", iwx: "苹果微信" };
-  let msg = `${proficiency.name}`;
-  if (proficiency.alias) msg += `(${proficiency.alias})`;
-  msg += ` [${names[platform] || platform}]\n`;
-  msg += `地区: ${proficiency.area} ${proficiency.areaPower}\n`;
-  msg += `城市: ${proficiency.city} ${proficiency.cityPower}\n`;
-  msg += `省份: ${proficiency.province} ${proficiency.provincePower}\n`;
-  msg += `国标: ${proficiency.guobiao}\n`;
-  msg += `更新: ${proficiency.updatetime}`;
+  const platformName = names[platform] || platform;
 
-  e.reply(msg);
+  const rendered = await Render.render("proficiency/index", {
+    data: proficiency,
+    platformName
+  }, { e, scale: 1.4 });
+
+  if (!rendered) {
+    let msg = `${proficiency.name}`;
+    if (proficiency.alias) msg += `(${proficiency.alias})`;
+    msg += ` [${platformName}]\n`;
+    msg += `地区: ${proficiency.area} ${proficiency.areaPower}\n`;
+    msg += `城市: ${proficiency.city} ${proficiency.cityPower}\n`;
+    msg += `省份: ${proficiency.province} ${proficiency.provincePower}\n`;
+    msg += `国标: ${proficiency.guobiao}\n`;
+    msg += `更新: ${proficiency.updatetime}`;
+
+    e.reply(msg);
+  }
   return true;
 }
 
