@@ -1,61 +1,152 @@
 import lodash from "lodash";
 import ProficiencyData from "./ProficiencyData.js";
-import { Common } from "#honor";
+import UserStore from "../../model/UserStore.js";
 
-const proficiencyReg =
-  /^#*([^#]+?)\s*(?:honor)?(?:查战力|战力|查询|战斗力|战力查询|战斗力查询|战斗力查询)(安卓|安|果|苹果|ios|android|iOS|Android|华为|huawei|Huawei|HUAWEI)(QQ|q|qq|微信|w|wx|WX|微|v|vx|VX)?$/;
+// 平台别名映射
+const OS_MAP = {
+  "安卓": "a", "安": "a", "android": "a", "a": "a",
+  "苹果": "i", "果": "i", "ios": "i", "i": "i",
+  "华为": "a", "huawei": "a",
+};
+
+const CLIENT_MAP = {
+  "qq": "qq", "q": "qq", "QQ": "qq",
+  "微信": "wx", "wx": "wx", "微": "wx", "v": "wx", "vx": "wx",
+  "w": "wx",
+};
+
+/**
+ * 解析平台字符串 → API 参数
+ * 输入: "安卓qq" / "iosv" / "苹果微信" / "aqq" / ...
+ * 输出: "aqq" / "awx" / "iqq" / "iwx"
+ */
+function parsePlatform(str) {
+  if (!str) return null;
+  str = str.trim().toLowerCase();
+
+  // 直接匹配短格式
+  if (["aqq", "awx", "iqq", "iwx"].includes(str)) return str;
+
+  // 拆分: 找第一个匹配 OS 的前缀，剩下的是 client
+  let os = null, client = null;
+
+  for (const [key, val] of Object.entries(OS_MAP)) {
+    if (str.startsWith(key.toLowerCase())) {
+      os = val;
+      str = str.slice(key.length);
+      break;
+    }
+  }
+
+  for (const [key, val] of Object.entries(CLIENT_MAP)) {
+    if (str === key.toLowerCase() || str === val) {
+      client = val;
+      break;
+    }
+  }
+
+  if (os && client) return `${os}${client}`;
+  if (os) return `${os}qq`; // 默认 QQ
+  return null;
+}
+
+// 新版正则: #战力 英雄名 [平台]
+const newReg = /^#战力\s+(.+?)(?:\s+([\u4e00-\u9fa5a-zA-Z]+))?$/;
+
+// 旧版正则（兼容）
+const oldReg =
+  /^#*([^#]+?)\s*(?:honor)?(?:查战力|战力|查询|战斗力|战力查询|战斗力查询)(安卓|安|果|苹果|ios|android|iOS|Android|华为|huawei|Huawei|HUAWEI)(QQ|q|qq|微信|w|wx|WX|微|v|vx|VX)?$/;
+
+// 设置平台正则
+const setPlatformReg = /^#设置平台\s*(.+)$/;
 
 const ProficiencyQuery = {
-  async query(e) {
-    let ret = proficiencyReg.exec(e.msg);
+  /**
+   * #战力 英雄名 [平台] — 新版简洁命令
+   */
+  async queryNew(e) {
+    const match = newReg.exec(e.msg);
+    if (!match) return;
 
-    // TODO: Platform regularize to android and ios
-    if (ret.length === 4) {
-      e.hero_name = ret[1];
-      e.os = ret[2] || "android";
-      e.platform = ret[3] || "qq";
-    } else if (ret.length === 2) {
-      e.hero_name = ret[1];
-      e.os = ret[2] || "android";
-      e.platform = "qq";
+    const heroName = match[1].trim();
+    const platformStr = match[2] || null;
+
+    // 确定平台: 命令指定 > 用户默认 > 提示设置
+    let platform = parsePlatform(platformStr);
+    if (!platform) {
+      const saved = await UserStore.getPlatform(String(e.user_id));
+      if (saved) {
+        platform = saved;
+      } else {
+        e.reply("请指定平台，如: #战力 露娜 安卓qq\n或设置默认: #设置平台 安卓qq");
+        return;
+      }
     }
 
-    // regularize os
-    if (["安卓", "安", "android", "Android"].includes(e.os)) {
-      e.os = "a";
-    } else {
-      e.os = "i";
-    }
+    await doQuery(e, heroName, platform);
+  },
 
-    // regularize platform
-    if (["QQ", "qq", "q"].includes(e.platform)) {
-      e.platform = "qq";
-    } else {
-      e.platform = "wx";
-    }
+  /**
+   * 旧版命令兼容: #露娜查战力安卓qq
+   */
+  async queryOld(e) {
+    const match = oldReg.exec(e.msg);
+    if (!match) return;
 
-    e.platform = `${e.os}${e.platform}`;
+    const heroName = match[1].trim();
+    let os = "a", client = "qq";
 
-    let proficiency = await ProficiencyData.getProficiency(
-      e.hero_name,
-      e.platform
-    );
-    if (lodash.isEmpty(proficiency) || proficiency.name === undefined) {
-      e.reply("没有找到该英雄的战力信息");
+    if (["安卓", "安", "android", "Android"].includes(match[2])) os = "a";
+    else os = "i";
+
+    if (match[3] && ["QQ", "qq", "q"].includes(match[3])) client = "qq";
+    else if (match[3]) client = "wx";
+
+    await doQuery(e, heroName, `${os}${client}`);
+  },
+
+  /**
+   * #设置平台 安卓qq
+   */
+  async setPlatform(e) {
+    const match = setPlatformReg.exec(e.msg);
+    if (!match) return;
+
+    const platform = parsePlatform(match[1]);
+    if (!platform) {
+      e.reply("无法识别平台\n支持: 安卓qq / 安卓微信 / 苹果qq / 苹果微信\n简写: aqq / awx / iqq / iwx");
       return;
     }
-    // TODO: Render.render message
-    // 头像: ${data.photo}
-    let msg = `${proficiency.name}(${proficiency.alias})
-    区服: ${proficiency.platform}
-    地区: ${proficiency.area} (战力: ${proficiency.areaPower})
-    城市: ${proficiency.city} (战力: ${proficiency.cityPower})
-    省份: ${proficiency.province} (战力: ${proficiency.provincePower})
-    国标: ${proficiency.guobiao}
-    更新时间: ${proficiency.updatetime}`;
-    e.reply(msg);
-    return true;
+
+    await UserStore.savePlatform(String(e.user_id), platform);
+
+    const names = { aqq: "安卓QQ", awx: "安卓微信", iqq: "苹果QQ", iwx: "苹果微信" };
+    e.reply(`默认平台已设为: ${names[platform] || platform}\n现在可以直接: #战力 英雄名`);
   },
 };
+
+/**
+ * 执行查询
+ */
+async function doQuery(e, heroName, platform) {
+  const proficiency = await ProficiencyData.getProficiency(heroName, platform);
+  if (lodash.isEmpty(proficiency) || proficiency.name === undefined) {
+    e.reply(`没有找到「${heroName}」的战力信息`);
+    return;
+  }
+
+  const names = { aqq: "安卓QQ", awx: "安卓微信", iqq: "苹果QQ", iwx: "苹果微信" };
+  let msg = `${proficiency.name}`;
+  if (proficiency.alias) msg += `(${proficiency.alias})`;
+  msg += ` [${names[platform] || platform}]\n`;
+  msg += `地区: ${proficiency.area} ${proficiency.areaPower}\n`;
+  msg += `城市: ${proficiency.city} ${proficiency.cityPower}\n`;
+  msg += `省份: ${proficiency.province} ${proficiency.provincePower}\n`;
+  msg += `国标: ${proficiency.guobiao}\n`;
+  msg += `更新: ${proficiency.updatetime}`;
+
+  e.reply(msg);
+  return true;
+}
 
 export default ProficiencyQuery;
