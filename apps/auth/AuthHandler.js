@@ -240,13 +240,14 @@ const AuthHandler = {
     const input = e.msg.replace(/^#添加别名\s*/, "").trim();
     const parts = input.split(/\s+/);
     if (parts.length < 2) {
-      e.reply("格式: #添加别名 英雄名 别名\n例如: #添加别名 镜 小镜子");
+      e.reply("格式: #添加别名 别名 英雄名\n例如: #添加别名 喵喵 梦奇\n含义: 查「喵喵」时等同于查「梦奇」");
       return;
     }
-    const heroName = parts[0];
-    const alias = parts[1];
-    await HeroAlias.addUserAlias(alias, heroName);
-    e.reply(`已添加别名: ${alias} → ${heroName}`);
+    const alias = parts[0];    // 别名（用户想用的叫法）
+    const heroName = parts[1]; // 官方英雄名（目标）
+
+    const result = await HeroAlias.addUserAlias(alias, heroName);
+    e.reply(result.msg);
   },
 
   async removeAlias(e) {

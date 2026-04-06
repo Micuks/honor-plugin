@@ -73,10 +73,68 @@ const HeroAlias = {
   },
 
   /**
-   * 添加用户自定义别名
+   * 检查是否是已知的官方英雄名
+   */
+  isOfficialHero(name) {
+    if (!name) return false;
+    // builtinMap 中官方名指向自己
+    const resolved = builtinMap.get(name.toLowerCase());
+    return resolved === name || resolved === name.toLowerCase();
+  },
+
+  /**
+   * 获取所有官方英雄名
+   */
+  getOfficialHeroes() {
+    const heroes = new Set();
+    for (const [, name] of builtinMap) {
+      heroes.add(name);
+    }
+    return [...heroes];
+  },
+
+  /**
+   * 添加用户自定义别名（带校验）
+   * @returns {{ ok: boolean, msg: string }}
    */
   async addUserAlias(alias, heroName) {
-    await redis.hSet(USER_ALIAS_KEY, alias.toLowerCase(), heroName);
+    const lowerAlias = alias.toLowerCase();
+    const lowerHero = heroName.toLowerCase();
+
+    // 校验1: 别名不能等于目标英雄名
+    if (lowerAlias === lowerHero) {
+      return { ok: false, msg: "别名不能和英雄名相同" };
+    }
+
+    // 校验2: 目标必须是已知的官方英雄名
+    if (!builtinMap.has(lowerHero) || builtinMap.get(lowerHero).toLowerCase() !== lowerHero) {
+      // 不是官方名，尝试解析
+      const resolved = builtinMap.get(lowerHero);
+      if (resolved) {
+        // 输入的是别名而不是官方名，提示用官方名
+        return { ok: false, msg: `「${heroName}」是别名，官方名是「${resolved}」\n请用: #添加别名 ${resolved} ${alias}` };
+      }
+      return { ok: false, msg: `「${heroName}」不是已知英雄名\n请使用官方英雄名（如 镜、露娜、孙悟空）` };
+    }
+
+    // 校验3: 别名不能是其他英雄的官方名（防止覆盖）
+    if (builtinMap.has(lowerAlias)) {
+      const existingHero = builtinMap.get(lowerAlias);
+      if (existingHero.toLowerCase() === lowerAlias) {
+        // 这个别名本身就是某个英雄的官方名
+        return { ok: false, msg: `「${alias}」已经是英雄「${existingHero}」的官方名，不能用作别名` };
+      }
+    }
+
+    // 校验4: 检查共轭冲突 — 如果反向映射已存在
+    const userMap = await getUserAliasMap();
+    if (userMap[lowerHero] && userMap[lowerHero].toLowerCase() === lowerAlias) {
+      return { ok: false, msg: `存在冲突: 已有「${heroName} → ${userMap[lowerHero]}」\n请先 #删除别名 ${heroName}` };
+    }
+
+    const officialName = builtinMap.get(lowerHero);
+    await redis.hSet(USER_ALIAS_KEY, lowerAlias, officialName);
+    return { ok: true, msg: `已添加别名: ${alias} → ${officialName}` };
   },
 
   /**
