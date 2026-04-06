@@ -5,6 +5,7 @@ import CampApi from "../../components/api/CampApi.js";
 import UserStore from "../../model/UserStore.js";
 import TokenPool from "../../model/TokenPool.js";
 import Render from "../../components/Render.js";
+import HeroAlias from "../../model/HeroAlias.js";
 
 const AuthHandler = {
   // ===================== 绑定 =====================
@@ -231,6 +232,45 @@ const AuthHandler = {
         e.reply(`查询失败: ${err.message}`);
       }
     }
+  },
+
+  // ===================== 别名管理 =====================
+
+  async addAlias(e) {
+    const input = e.msg.replace(/^#添加别名\s*/, "").trim();
+    const parts = input.split(/\s+/);
+    if (parts.length < 2) {
+      e.reply("格式: #添加别名 英雄名 别名\n例如: #添加别名 镜 小镜子");
+      return;
+    }
+    const heroName = parts[0];
+    const alias = parts[1];
+    await HeroAlias.addUserAlias(alias, heroName);
+    e.reply(`已添加别名: ${alias} → ${heroName}`);
+  },
+
+  async removeAlias(e) {
+    const alias = e.msg.replace(/^#删除别名\s*/, "").trim();
+    if (!alias) {
+      e.reply("格式: #删除别名 别名");
+      return;
+    }
+    await HeroAlias.removeUserAlias(alias);
+    e.reply(`已删除别名: ${alias}`);
+  },
+
+  async listAlias(e) {
+    const userAliases = await HeroAlias.getUserAliases();
+    const entries = Object.entries(userAliases);
+    if (entries.length === 0) {
+      e.reply("暂无自定义别名\n添加: #添加别名 英雄名 别名");
+      return;
+    }
+    let msg = "自定义别名:\n";
+    for (const [alias, hero] of entries) {
+      msg += `${alias} → ${hero}\n`;
+    }
+    e.reply(msg.trim());
   },
 };
 

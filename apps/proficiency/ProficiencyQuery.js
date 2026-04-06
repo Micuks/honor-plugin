@@ -132,7 +132,7 @@ const ProficiencyQuery = {
  */
 async function doQuery(e, heroName, platform) {
   // 别名/错别字 → 官方英雄名
-  const resolvedName = HeroAlias.resolve(heroName);
+  const resolvedName = await HeroAlias.resolve(heroName);
 
   const proficiency = await ProficiencyData.getProficiency(resolvedName, platform);
   if (lodash.isEmpty(proficiency) || proficiency.name === undefined) {

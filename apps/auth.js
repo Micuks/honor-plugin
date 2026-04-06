@@ -12,6 +12,9 @@ app.reg({
   poolStatus:   { name: "token池", rule: /^#(token池|Token池)$/i, fn: AuthHandler.poolStatus },
   campInfo:     { name: "营地信息", rule: /^#(营地信息|营地状态|我的营地)$/, fn: AuthHandler.campInfo },
   myHeroPower:  { name: "我的战力", rule: /^#(我的战力|英雄战力|我的英雄)$/, fn: AuthHandler.myHeroPower },
+  addAlias:     { name: "添加别名", rule: /^#添加别名\s+.+$/, fn: AuthHandler.addAlias },
+  removeAlias:  { name: "删除别名", rule: /^#删除别名\s+.+$/, fn: AuthHandler.removeAlias },
+  listAlias:    { name: "别名列表", rule: /^#(别名列表|查看别名|自定义别名)$/, fn: AuthHandler.listAlias },
 });
 
 export default app;

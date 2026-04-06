@@ -1,141 +1,103 @@
 /**
- * 英雄别名 / 错别字 → 官方名映射
+ * 英雄别名解析
  *
- * 使用方式: HeroAlias.resolve("八戒") → "猪八戒"
+ * 数据来源（优先级从高到低）:
+ *   1. 用户自定义别名 (Redis: honor:useralias)
+ *   2. 内置别名表 (resources/data/hero_alias.json)
+ *
+ * 使用: HeroAlias.resolve("八戒") → "猪八戒"
  */
+import fs from "node:fs";
+import { Data } from "#honor";
 
-// 别名表: 别名 → 官方名
-// 包含常见昵称、简称、错别字、外号
-const aliasMap = {
-  // ---- 战士 ----
-  "八戒": "猪八戒", "猪": "猪八戒", "二师兄": "猪八戒",
-  "悟空": "孙悟空", "猴子": "孙悟空", "猴": "孙悟空", "齐天大圣": "孙悟空",
-  "吕布": "吕布", "布布": "吕布",
-  "铠": "铠", "凯": "铠", "铠爹": "铠",
-  "亚瑟": "亚瑟", "站撸王": "亚瑟",
-  "典韦": "典韦", "韦神": "典韦",
-  "曹操": "曹操", "阿瞒": "曹操",
-  "老夫子": "老夫子", "老夫": "老夫子",
-  "宫本": "宫本武藏", "宫本武藏": "宫本武藏",
-  "花木兰": "花木兰", "木兰": "花木兰",
-  "雅典娜": "雅典娜",
-  "哪吒": "哪吒", "三太子": "哪吒",
-  "夏洛特": "夏洛特",
-  "李信": "李信", "暗信": "李信", "光信": "李信",
-  "马超": "马超",
-  "狂铁": "狂铁",
-  "盘古": "盘古",
-  "蒙恬": "蒙恬",
-  "司空震": "司空震", "司空": "司空震",
+const ALIAS_FILE = process.cwd() + "/plugins/honor-plugin/resources/data/hero_alias.json";
+const USER_ALIAS_KEY = "honor:useralias";
 
-  // ---- 刺客 ----
-  "镜": "镜", "黄香蕉": "镜", "香蕉": "镜",
-  "露娜": "露娜", "月下": "露娜", "luna": "露娜",
-  "韩信": "韩信", "国士无双": "韩信",
-  "兰陵王": "兰陵王", "兰陵": "兰陵王", "小兰": "兰陵王",
-  "阿珂": "阿珂", "暗影刺客": "阿珂",
-  "李白": "李白", "剑仙": "李白", "青莲剑仙": "李白",
-  "娜可露露": "娜可露露", "娜露": "娜可露露", "露露": "娜可露露",
-  "百里玄策": "百里玄策", "玄策": "百里玄策", "狗子": "百里玄策",
-  "裴擒虎": "裴擒虎", "虎子": "裴擒虎", "裴": "裴擒虎",
-  "上官婉儿": "上官婉儿", "婉儿": "上官婉儿", "上官": "上官婉儿",
-  "司马懿": "司马懿", "司马": "司马懿",
-  "云中君": "云中君", "云中": "云中君",
-  "澜": "澜",
-  "暃": "暃",
+// ===================== 内置别名 =====================
 
-  // ---- 法师 ----
-  "妲己": "妲己", "妲": "妲己", "狐狸": "妲己",
-  "貂蝉": "貂蝉", "貂": "貂蝉",
-  "诸葛亮": "诸葛亮", "诸葛": "诸葛亮",
-  "甄姬": "甄姬",
-  "安琪拉": "安琪拉", "安琪": "安琪拉",
-  "小乔": "小乔",
-  "墨子": "墨子",
-  "王昭君": "王昭君", "昭君": "王昭君",
-  "嬴政": "嬴政", "政哥": "嬴政",
-  "不知火舞": "不知火舞", "火舞": "不知火舞",
-  "张良": "张良",
-  "干将莫邪": "干将莫邪", "干将": "干将莫邪", "干莫": "干将莫邪",
-  "女娲": "女娲",
-  "杨玉环": "杨玉环", "玉环": "杨玉环",
-  "西施": "西施",
-  "嫦娥": "嫦娥",
-  "沈梦溪": "沈梦溪", "沈梦": "沈梦溪",
-  "米莱迪": "米莱迪", "米莱": "米莱迪",
-  "周瑜": "周瑜",
+// 从 JSON 构建 alias→name 反向索引
+let builtinMap = new Map();
 
-  // ---- 射手 ----
-  "后羿": "后羿",
-  "鲁班七号": "鲁班七号", "鲁班": "鲁班七号",
-  "虞姬": "虞姬",
-  "马可波罗": "马可波罗", "马可": "马可波罗",
-  "狄仁杰": "狄仁杰", "狄仁": "狄仁杰",
-  "李元芳": "李元芳", "元芳": "李元芳",
-  "百里守约": "百里守约", "守约": "百里守约",
-  "孙尚香": "孙尚香", "香香": "孙尚香",
-  "公孙离": "公孙离", "公孙": "公孙离",
-  "伽罗": "伽罗",
-  "蒙犽": "蒙犽",
-  "艾琳": "艾琳",
-  "黄忠": "黄忠",
-  "成吉思汗": "成吉思汗", "成吉": "成吉思汗",
-
-  // ---- 辅助 ----
-  "瑶": "瑶", "瑶妹": "瑶",
-  "鬼谷子": "鬼谷子", "鬼谷": "鬼谷子",
-  "大乔": "大乔",
-  "蔡文姬": "蔡文姬", "蔡文": "蔡文姬", "文姬": "蔡文姬",
-  "孙膑": "孙膑",
-  "张飞": "张飞",
-  "刘禅": "刘禅", "刘蝉": "刘禅",
-  "庄周": "庄周", "鱼": "庄周",
-  "太乙真人": "太乙真人", "太乙": "太乙真人",
-  "牛魔": "牛魔王", "牛魔王": "牛魔王",
-  "东皇太一": "东皇太一", "东皇": "东皇太一",
-  "明世隐": "明世隐", "明世": "明世隐",
-  "盾山": "盾山",
-  "鲁班大师": "鲁班大师",
-
-  // ---- 坦克 ----
-  "廉颇": "廉颇",
-  "项羽": "项羽", "霸王": "项羽",
-  "程咬金": "程咬金", "程咬": "程咬金",
-  "白起": "白起",
-  "刘邦": "刘邦",
-  "夏侯惇": "夏侯惇", "夏侯": "夏侯惇",
-  "钟馗": "钟馗",
-  "关羽": "关羽", "关二爷": "关羽",
-  "达摩": "达摩",
-  "苏烈": "苏烈",
-  "梦奇": "梦奇",
-  "猪八戒": "猪八戒",
-};
-
-// 构建反向索引（小写）用于模糊匹配
-const lowerMap = new Map();
-for (const [alias, name] of Object.entries(aliasMap)) {
-  lowerMap.set(alias.toLowerCase(), name);
+function loadBuiltin() {
+  try {
+    const raw = fs.readFileSync(ALIAS_FILE, "utf-8");
+    const data = JSON.parse(raw);
+    builtinMap = new Map();
+    for (const [heroName, aliases] of Object.entries(data)) {
+      if (heroName.startsWith("_")) continue;
+      // 官方名也指向自己
+      builtinMap.set(heroName.toLowerCase(), heroName);
+      for (const alias of aliases) {
+        if (alias) builtinMap.set(alias.toLowerCase(), heroName);
+      }
+    }
+  } catch (err) {
+    console.log(`[honor] 加载英雄别名表失败: ${err.message}`);
+  }
 }
+
+loadBuiltin();
+
+// ===================== 用户自定义别名 =====================
+
+async function getUserAliasMap() {
+  try {
+    const raw = await redis.hGetAll(USER_ALIAS_KEY);
+    return raw || {};
+  } catch {
+    return {};
+  }
+}
+
+// ===================== 对外接口 =====================
 
 const HeroAlias = {
   /**
-   * 解析英雄名（别名/错别字 → 官方名）
-   * 找不到则原样返回（可能是官方名或新英雄）
+   * 解析英雄名（别名 → 官方名）
+   * 优先用户自定义，其次内置表，找不到原样返回
    */
-  resolve(input) {
+  async resolve(input) {
     if (!input) return input;
     const trimmed = input.trim();
-
-    // 精确匹配
-    if (aliasMap[trimmed]) return aliasMap[trimmed];
-
-    // 小写匹配（英文别名）
     const lower = trimmed.toLowerCase();
-    if (lowerMap.has(lower)) return lowerMap.get(lower);
 
-    // 没匹配到，原样返回（API 可能认识）
+    // 1. 用户自定义别名 (Redis)
+    const userMap = await getUserAliasMap();
+    if (userMap[lower]) return userMap[lower];
+
+    // 2. 内置别名表
+    if (builtinMap.has(lower)) return builtinMap.get(lower);
+
+    // 3. 没匹配到，原样返回
     return trimmed;
+  },
+
+  /**
+   * 添加用户自定义别名
+   */
+  async addUserAlias(alias, heroName) {
+    await redis.hSet(USER_ALIAS_KEY, alias.toLowerCase(), heroName);
+  },
+
+  /**
+   * 删除用户自定义别名
+   */
+  async removeUserAlias(alias) {
+    await redis.hDel(USER_ALIAS_KEY, alias.toLowerCase());
+  },
+
+  /**
+   * 获取所有用户自定义别名
+   */
+  async getUserAliases() {
+    return getUserAliasMap();
+  },
+
+  /**
+   * 重新加载内置别名表（编辑 JSON 后调用）
+   */
+  reload() {
+    loadBuiltin();
   },
 };
 
